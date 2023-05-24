@@ -70,7 +70,7 @@ async function runCrawler() {
     }
 
     console.log('Companies with "Ynov" in their name:');
-    console.log(companyNames);
+    console.log(companyNames.flat());
 
     await browser.close();
 }
