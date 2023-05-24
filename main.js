@@ -1,13 +1,35 @@
 const puppeteer = require('puppeteer');
 
-const USERNAME = 'user';
-const PASSWORD = process.env.EMAIL_PASSWORD;
+const USERNAME = '31florian974@gmail.com';
+const PASSWORD = process.env.LINKEDIN_PASSWORD;
 
-// get the company research of LinkedIn
-async function getCompany(search){
 
+// Navigate to LinkedIn login page and log
+async function loginToLinkedin(page, login, password) {
+    await page.goto('https://www.linkedin.com/checkpoint/rm/sign-in-another-account?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin');
+    await page.type('#username', login);
+    await page.type('#password', password);
+    await page.click('.login__form_action_container ');
+    await page.waitForNavigation();
 }
 
+// Scroll down to the page in case of infinity scroll configuration
+async function infiniteScroll(page, maxScrollAttempts = 3) {
+    let previousHeight = 0;
+    let scrollAttempts = 0;
+    while (scrollAttempts < maxScrollAttempts) {
+        await page.evaluate(() => {
+            window.scrollTo(0, document.documentElement.scrollHeight);
+        });
+        await page.waitForTimeout(1000);
+        const newHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+        if (newHeight === previousHeight) {
+            break;
+        }
+        previousHeight = newHeight;
+        scrollAttempts++;
+    }
+}
 
 // get the employees
 async function crawlCompanyEmployees(companyName) {
@@ -15,71 +37,61 @@ async function crawlCompanyEmployees(companyName) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    // Navigate to LinkedIn and log in (replace with your own login credentials)
-    await page.goto('https://www.linkedin.com');
-    await page.type('#username', 'your_username');
-    await page.type('#password', 'your_password');
-    await page.click('#login-submit');
-    await page.waitForNavigation();
+    await loginToLinkedin(page, USERNAME, PASSWORD)
 
-    // Search for the company
-    await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${companyName}`)
+    //Go to company employee list
+    //await page.goto(`https://www.linkedin.com/company/${companyName}/people/`)
+    await page.goto(`https://www.linkedin.com/company/ntmgroup/people/`)
 
+    // Scroll to the bottom of the page
+    await page.setViewport({width: 1280, height: 800});
+    await infiniteScroll(page);
 
-    await page.goto(`https://www.linkedin.com/company/${companyName}/people/`);
+    // Wait for the search results to load
+    await page.waitForSelector(".scaffold-finite-scroll__content");
 
-    // Open the company profile page
-    await page.waitForSelector('.search-result__result-link');
-    const companyLink = await page.$('.search-result__result-link');
-    const companyUrl = await page.evaluate((el) => el.href, companyLink);
-    await page.goto(companyUrl);
-
-    // Access the employee list
-    await page.waitForSelector('a[data-control-name="topcard_employees"]');
-    await page.click('a[data-control-name="topcard_employees"]');
-    await page.waitForNavigation();
-
-    // Extract employee data
-    const employeeList = [];
-    let nextPageExists = true;
-    while (nextPageExists) {
-        const employeeElements = await page.$$('.search-results__result-item');
-        for (const employeeElement of employeeElements) {
-            const nameElement = await employeeElement.$('.actor-name');
-            const name = await page.evaluate((el) => el.innerText, nameElement);
-
-            const jobTitleElement = await employeeElement.$('.actor-title');
-            const jobTitle = await page.evaluate((el) => el.innerText, jobTitleElement);
-
-            const locationElement = await employeeElement.$('.subline-level-2');
-            const location = await page.evaluate((el) => el.innerText, locationElement);
-
-            employeeList.push({ name, jobTitle, location });
-        }
-
-        // Check if there is a next page
-        nextPageExists = await page.evaluate(() => {
-            const nextButton = document.querySelector('.artdeco-pagination__button--next');
-            if (nextButton && !nextButton.classList.contains('disabled')) {
-                nextButton.click();
-                return true;
+    // Extract employees profiles links
+    const employeesProfiles = await page.evaluate(() => {
+        const employeesProfiles = Array.from(document.querySelectorAll('.org-people-profile-card'));
+        return employeesProfiles.map(profile => {
+            let profileLink = profile.querySelector(".app-aware-link");
+            if (profileLink !== null) {
+                return profileLink.href.split("?")[0];
             }
-            return false;
-        });
+        })
+    });
 
-        if (nextPageExists) {
-            await page.waitForNavigation();
+
+    let employeeList = [];
+    for (const link of employeesProfiles) {
+        if (link !== null) {
+            await page.goto(link);
+            console.log(link)
+            const employeeElements = await page.$$(".pv-top-card");
+            let employee = {};
+            for (const employeeElement of employeeElements) {
+                const imgElement = await employeeElement.$('.pv-top-card-profile-picture__image');
+                employee.profileImg = await page.evaluate((el) => el.src, imgElement);
+
+                const subtitleElement = await employeeElement.$('.text-body-medium');
+                employee.subtitle = await page.evaluate((el) => el.innerText, subtitleElement);
+
+                const locationElement = await employeeElement.$(".text-body-small");
+                employee.location = await page.evaluate((el) => el.innerText, locationElement);
+            }
+            // await page.goto(`${link}/overlay/contact-info/`)
+            // employee.email = document.querySelector('.pv-contact-info__ci-container').textContent;
+
+            employeeList.push(employee);
         }
     }
 
-    // Close the browser
     await browser.close();
-
     return employeeList;
 }
 
 // Usage example
-const companyName = 'Your Company Name';
+const companyName = 'ntmgroup';
 crawlCompanyEmployees(companyName)
     .then((employees) => {
         console.log(employees);
