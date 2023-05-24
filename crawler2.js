@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 
+
 async function runCrawler() {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -19,39 +20,31 @@ async function runCrawler() {
     await page.waitForNavigation();
     console.log('5');
 
-    // Search for "Ynov" enterprises
-    await page.goto('https://www.linkedin.com/search/results/companies/?keywords=Ynov');
-    console.log('6');
+    // serach inov
+    const company = 'Ynov';
 
-    while (nextPageExists) {
-        // Wait for the search results to load
-        await page.waitForSelector('.reusable-search__result-container');
-        console.log('7');
+    let companyNames = [];
 
-        // Extract company names
-        const companyNames = await page.evaluate(() => {
-            const companies = Array.from(document.querySelectorAll('.reusable-search__result-container'));
-            return companies.map(company => company.querySelector('.entity-result__title-line').textContent.trim());
-        });
-        console.log(10)
+    const pageCount = await page.$$('.artdeco-pagination__indicator--number');
 
-        // Check if there is a next page
-        nextPageExists = await page.evaluate(() => {
-            const nextButton = document.querySelector('.artdeco-pagination__button--next');
-            if (nextButton && !nextButton.classList.contains('disabled')) {
-                nextButton.click();
-                return true;
-            }
-            return false;
-        });
+    console.log(pageCount.length)
 
-        if (nextPageExists) {
-            await page.waitForNavigation();
-            console.log(8)
-        }
-        console.log('Companies with "Ynov" in their name:');
-        console.log(companyNames);
-    }
+    // for (let i = 1; i <= pageCount; i++) {
+    //     await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}&page=${i}`);
+    //     // Wait for the search results to load
+    //
+    //     await page.waitForSelector('.reusable-search__result-container');
+    //     const companiesElements = await page.$$(".reusable-search__result-container");
+    //
+    //     for (const companyElement of companiesElements) {
+    //         const companyName = companyElement.$('entity-result__title-text');
+    //         companyNames.push(page.evaluate((el) => el.innerText.trim(), companyName))
+    //     }
+    // }
+
+    console.log('Companies with "Ynov" in their name:');
+    console.log(companyNames);
+
     await browser.close();
 }
 
