@@ -5,26 +5,21 @@ const path = require('path');
 const server = http.createServer((req, res) => {
     let filePath;
 
-    // Vérifier l'URL demandée et définir le chemin du fichier en conséquence
     if (req.url === '/' || req.url === '/homepage.html') {
         filePath = path.join(__dirname, 'index/homepage.html');
     } else if (req.url === '/resultpage.html') {
         filePath = path.join(__dirname, 'index/resultpage.html');
     } else {
-        // Si l'URL demandée ne correspond à aucun des fichiers spécifiés, retourner une erreur 404
         res.writeHead(404);
         res.end('Page not found!');
         return;
     }
 
-    // Lire le fichier correspondant au chemin spécifié
     fs.readFile(filePath, (err, content) => {
         if (err) {
-            // En cas d'erreur lors de la lecture du fichier, retourner une erreur 500
             res.writeHead(500);
             res.end('An error occurred while loading the file!');
         } else {
-            // Définir l'en-tête de la réponse avec le type de contenu approprié
             if (filePath.endsWith('.html')) {
                 res.setHeader('Content-Type', 'text/html');
             } else if (filePath.endsWith('.js')) {
@@ -33,7 +28,6 @@ const server = http.createServer((req, res) => {
                 res.setHeader('Content-Type', 'text/css');
             }
 
-            // Envoyer le contenu du fichier en réponse
             res.writeHead(200);
             res.end(content);
         }
