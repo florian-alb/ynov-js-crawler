@@ -7,9 +7,9 @@ const server = http.createServer((req, res) => {
 
     // Vérifier l'URL demandée et définir le chemin du fichier en conséquence
     if (req.url === '/' || req.url === '/homepage.html') {
-        filePath = path.join(__dirname, 'homepage.html');
+        filePath = path.join(__dirname, 'index/homepage.html');
     } else if (req.url === '/resultpage.html') {
-        filePath = path.join(__dirname, 'resultpage.html');
+        filePath = path.join(__dirname, 'index/resultpage.html');
     } else {
         // Si l'URL demandée ne correspond à aucun des fichiers spécifiés, retourner une erreur 404
         res.writeHead(404);
