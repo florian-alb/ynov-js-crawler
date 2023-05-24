@@ -40,8 +40,7 @@ async function crawlCompanyEmployees(companyName) {
     await loginToLinkedin(page, USERNAME, PASSWORD)
 
     //Go to company employee list
-    //await page.goto(`https://www.linkedin.com/company/${companyName}/people/`)
-    await page.goto(`https://www.linkedin.com/company/ntmgroup/people/`)
+    await page.goto(`https://www.linkedin.com/company/${companyName}/people/`)
 
     // Scroll to the bottom of the page
     await page.setViewport({width: 1280, height: 800});
@@ -66,7 +65,6 @@ async function crawlCompanyEmployees(companyName) {
     for (const link of employeesProfiles) {
         if (link !== null) {
             await page.goto(link);
-            console.log(link)
             const employeeElements = await page.$$(".pv-top-card");
             let employee = {};
             for (const employeeElement of employeeElements) {
@@ -79,8 +77,11 @@ async function crawlCompanyEmployees(companyName) {
                 const locationElement = await employeeElement.$(".text-body-small");
                 employee.location = await page.evaluate((el) => el.innerText, locationElement);
             }
-            // await page.goto(`${link}/overlay/contact-info/`)
-            // employee.email = document.querySelector('.pv-contact-info__ci-container').textContent;
+            await page.goto(`${link}/overlay/contact-info/`)
+
+            const emailElement = await page.$('.ci-email');
+
+            emailElement === null ? employee.email = "none" : await page.evaluate(el => el.innerText, emailElement);
 
             employeeList.push(employee);
         }
@@ -92,6 +93,7 @@ async function crawlCompanyEmployees(companyName) {
 
 // Usage example
 const companyName = 'ntmgroup';
+
 crawlCompanyEmployees(companyName)
     .then((employees) => {
         console.log(employees);
