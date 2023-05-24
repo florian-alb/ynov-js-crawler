@@ -1,46 +1,73 @@
 const puppeteer = require('puppeteer');
 
+const USERNAME = '31florian974@gmail.com';
+const PASSWORD = process.env.LINKEDIN_PASSWORD;
+
+
+async function infiniteScroll(page, maxScrollAttempts = 3) {
+    let previousHeight = 0;
+    let scrollAttempts = 0;
+    while (scrollAttempts < maxScrollAttempts) {
+        await page.evaluate(() => {
+            window.scrollTo(0, document.documentElement.scrollHeight);
+        });
+        await page.waitForTimeout(1000);
+        const newHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+        if (newHeight === previousHeight) {
+            break;
+        }
+        previousHeight = newHeight;
+        scrollAttempts++;
+    }
+}
 
 async function runCrawler() {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch(
+        {
+            headless: false,
+            ignoreHTTPSErrors: true,
+        }
+    );
     const page = await browser.newPage();
     let nextPageExists = true;
 
-    await page.goto('https://www.linkedin.com/login/fr?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin');
-    console.log('1');
-    // Login to LinkedIn (replace 'email' and 'password' with your own credentials)
-    await page.type('#username', 'gourbil.francis@gmail.com');
-    console.log('2');
-    await page.type('#password', '19911974');
-    console.log('3');
-    await page.click('.login__form_action_container ');
-    console.log('4');
+    await page.goto('https://www.linkedin.com/checkpoint/rm/sign-in-another-account?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin');
 
-    // Wait for login success
-    await page.waitForNavigation();
-    console.log('5');
+    await page.type('#username', USERNAME);
+
+    await page.type('#password', PASSWORD);
+
+    await page.click('.login__form_action_container ');
+
+    await page.waitForSelector('.share-box-feed-entry__closed-share-box');
 
     // serach inov
     const company = 'Ynov';
 
     let companyNames = [];
 
-    const pageCount = await page.$$('.artdeco-pagination__indicator--number');
+    await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}`);
 
-    console.log(pageCount.length)
+    await infiniteScroll(page);
 
-    // for (let i = 1; i <= pageCount; i++) {
-    //     await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}&page=${i}`);
-    //     // Wait for the search results to load
-    //
-    //     await page.waitForSelector('.reusable-search__result-container');
-    //     const companiesElements = await page.$$(".reusable-search__result-container");
-    //
-    //     for (const companyElement of companiesElements) {
-    //         const companyName = companyElement.$('entity-result__title-text');
-    //         companyNames.push(page.evaluate((el) => el.innerText.trim(), companyName))
-    //     }
-    // }
+    await page.waitForSelector('.artdeco-pagination__indicator--number');
+
+    const pageCount = await page.evaluate(() => {
+        const pages = document.querySelectorAll('.artdeco-pagination__indicator--number');
+        return parseInt(pages[pages.length - 1].textContent);
+    });
+
+    for (let i = 1; i <= pageCount; i++) {
+        await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}&page=${i}`);
+
+        await page.waitForSelector('.reusable-search__result-container');
+        const c = await page.evaluate(() => {
+            const companies = Array.from(document.querySelectorAll('.reusable-search__result-container'));
+            return companies.map(company => company.querySelector('.entity-result__title-line').textContent.trim());
+        });
+
+        companyNames.push(c);
+    }
 
     console.log('Companies with "Ynov" in their name:');
     console.log(companyNames);
@@ -49,3 +76,10 @@ async function runCrawler() {
 }
 
 runCrawler();
+
+
+// const getPagesNumber = () => {
+//     const pages = document.querySelectorAll('.artdeco-pagination__indicator');
+//     return parseInt(pages[pages.length - 1].textContent);
+// }
+// getPagesNumber()
