@@ -66,7 +66,7 @@ async function crawlCompanyEmployees(companyName) {
         if (link !== null) {
             await page.goto(link);
             const employeeElements = await page.$$(".pv-top-card");
-            let employee = {};
+            let employee = {link:link};
             for (const employeeElement of employeeElements) {
                 const imgElement = await employeeElement.$('.pv-top-card-profile-picture__image');
                 employee.profileImg = await page.evaluate((el) => el.src, imgElement);
