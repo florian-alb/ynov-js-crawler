@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 
-const USERNAME = '31florian974@gmail.com';
-const PASSWORD = process.env.LINKEDIN_PASSWORD;
+const USERNAME = 'nikzibi31@gmail.com';
+const PASSWORD = '19911974';
 
 
 async function infiniteScroll(page, maxScrollAttempts = 3) {
