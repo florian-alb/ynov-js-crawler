@@ -13,4 +13,4 @@ class Scrolling {
     }
 }
 
-export const scrolling = new scrolling();
+export const scrolling = new Scrolling();

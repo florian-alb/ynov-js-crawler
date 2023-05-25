@@ -1,6 +1,6 @@
 import {scrolling} from "./infiniteScroll.js";
 
-class Crawl{
+class Crawl {
     // get the employees profiles.
     async scrapeEmployeesLinks(page, companyName) {
         //Go to company employee list
@@ -67,6 +67,36 @@ class Crawl{
         return employeeList;
     }
 
+    async scrapCompanies(page, company = 'Ynov') {
+        let companyNames = [];
+        await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}`)
+        await page.waitForTimeout(2000);
+
+        await page.waitForSelector('.scaffold-layout__main');
+
+        const noResults = await page.$('.search-reusable-search-no-results');
+
+        if (noResults){
+            return companyNames;
+        }
+
+        await scrolling.infiniteScroll(page);
+        await page.waitForSelector('.artdeco-pagination__indicator--number');
+        const pageCount = await page.evaluate(() => {
+            const pages = document.querySelectorAll('.artdeco-pagination__indicator--number');
+            return parseInt(pages[pages.length - 1].textContent);
+        });
+        for (let i = 1; i <= pageCount; i++) {
+            await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}&page=${i}`);
+            await page.waitForSelector('.reusable-search__result-container');
+            const c = await page.evaluate(() => {
+                const companies = Array.from(document.querySelectorAll('.reusable-search__result-container'));
+                return companies.map(company => company.querySelector('.entity-result__title-line').textContent.trim());
+            });
+            companyNames.push(c);
+        }
+        return companyNames.flat();
+    }
 }
 
 export const crawl = new Crawl();
