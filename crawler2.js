@@ -76,10 +76,3 @@ async function runCrawler() {
 }
 
 runCrawler();
-
-
-// const getPagesNumber = () => {
-//     const pages = document.querySelectorAll('.artdeco-pagination__indicator');
-//     return parseInt(pages[pages.length - 1].textContent);
-// }
-// getPagesNumber()
