@@ -1,8 +1,6 @@
 const puppeteer = require('puppeteer');
 const e = require("express");
 
-// const USERNAME = '31florian974@gmail.com';
-// const PASSWORD = process.env.LINKEDIN_PASSWORD;
 const SESSION_COOKIE = 'AQEDATU1jN0F2maIAAABiFMGjEkAAAGIdxMQSVYAuTW1y6ntVe2cvrrzIYMioQR1_CKUBauY3lm2jmpwZKKBpEtGqq4NeOZ6I193z8m6FlzEluhVGorykp-oK8eOeztWZFIwPKgN21FiLPbUeKSrBEOl'
 
 // Navigate to LinkedIn login page and log
@@ -65,12 +63,21 @@ async function crawlCompanyEmployees(companyName) {
     let employeeList = [];
     for (const link of employeesProfiles) {
         if (link !== null) {
+            // Set a random delay between 2000 and 5000 milliseconds
+            const delay = Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000;
+            await page.waitForTimeout(delay);
+
             await page.goto(link);
+
+            await page.waitForSelector('.pv-top-card');
             const employeeElements = await page.$$(".pv-top-card");
             let employee = {link: link};
             for (const employeeElement of employeeElements) {
                 const imgElement = await employeeElement.$('.pv-top-card-profile-picture__image');
                 employee.profileImg = await page.evaluate((el) => el.src, imgElement);
+
+                const nameElement = await employeeElement.$('.text-heading-xlarge');
+                employee.name = await page.evaluate(el => el.innerText, nameElement);
 
                 const subtitleElement = await employeeElement.$('.text-body-medium');
                 employee.subtitle = await page.evaluate((el) => el.innerText, subtitleElement);
