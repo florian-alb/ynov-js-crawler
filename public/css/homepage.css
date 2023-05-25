@@ -6,26 +6,21 @@ body {
 h1 {
     text-align: center;
     color: white;
-    font-size: 35px;
-    margin-inline: 20vw ;
+    font-size: 55px;
 }
-
 
 .container {
     display: flex;
-
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.couple-range {
-    display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    position: fixed;
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 
-    max-width: 300px;
+label {
+    color: white;
 }
 
 .couple-search{
@@ -35,18 +30,55 @@ h1 {
     justify-content: center;
 }
 
-label {
+form {
+    display: flex;
+    align-items: center;
+}
+
+#search-bar{
+    flex: 1;
+    border-radius: 35px;
+    width: 25vw;
+    height: 3vw;
+    font-size: 16px;
+}
+
+#search-button{
+    border-radius: 35px;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    width: 3vw;
+    height: 3vw;
+    font-size: 16px;
+}
+
+#search-image {
+    background: white;
+    width: 3vw;
+    height: 3vw;
+    border-radius: 100%;
+
+}
+
+.couple-range {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1vw;
+}
+
+.slider-container {
+     display: flex;
+     align-items: center;
+ }
+
+.slider-value {
+    margin-left: 10px;
     color: white;
 }
 
-#site-search{
-    border-radius: 10px;
-}
-
-input[type="range"] {
-    width: 150%;
-}
-
-#button-search{
-    border-radius: 10px;
+#text-range{
+    font-size: 30px;
 }
