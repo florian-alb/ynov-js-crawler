@@ -7,8 +7,8 @@ let db = new sqlite3.Database('./data.db');
 const createFirstTable = `
     CREATE TABLE IF NOT EXISTS enterprises(
                                               Enterprises_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                              nickname TEXT NOT NULL,
                                               profileImg TEXT NOT NULL,
+                                              nickname TEXT NOT NULL,
                                               location TEXT NOT NULL,
                                               link TEXT NOT NULL UNIQUE
     );`;
@@ -25,9 +25,9 @@ const createSecondTable = `
         email TEXT NOT NULL
 );`;
 
-const insertDataQueryEnterprises = `
+export const insertDataQueryEnterprises = `
     INSERT OR IGNORE INTO enterprises VALUES (NULL,?,?,?,?)`;
-const insertDataQueryEmployee = `
+export const insertDataQueryEmployee = `
     INSERT OR IGNORE INTO employee VALUES (NULL,?,?,?,?,?,?,?)`;
 
 const selectDataQueryEnterprises = `SELECT * FROM enterprises`;
@@ -40,8 +40,8 @@ async function performDatabaseOperations() {
     await runQuery(createSecondTable);
 
     const dataEnterprises = {
-        nickname: 'Sample Nickname',
         profileImg: 'sample.jpg',
+        nickname: 'Sample Nickname',
         location: 'Sample Location',
         link: 'sample-link',
     };
@@ -74,7 +74,7 @@ async function performDatabaseOperations() {
 }
 
 // Helper function to run a query with optional parameters
-function runQuery(query, params = []) {
+export function runQuery(query, params = []) {
     return new Promise((resolve, reject) => {
         db.run(query, params, function (error) {
             if (error) {

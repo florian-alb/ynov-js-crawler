@@ -1,4 +1,7 @@
 import {scrolling} from "./infiniteScroll.js";
+import {insertDataQueryEnterprises} from "./opendb.js";
+import {insertDataQueryEmployee} from "./opendb.js";
+import {runQuery} from "./opendb.js";
 
 class Crawl {
     // get the employees profiles.
@@ -61,6 +64,7 @@ class Crawl {
                 });
 
                 employeeList.push(employee);
+                await runQuery(insertDataQueryEmployee, employee);
                 console.log(employee);
             }
         }
@@ -104,6 +108,7 @@ class Crawl {
                 company.location = await page.evaluate((el) => el.innerText, locationElement);
 
                 companiesProfiles.push(company)
+                await runQuery(insertDataQueryEnterprises, company);
                 console.log(company)
             }
         }
