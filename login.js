@@ -4,6 +4,10 @@ class Login {
         const cookie = {'name': 'li_at', 'value': sessionCookie, 'domain': '.linkedin.com'};
         await page.setCookie(cookie);
         await page.goto('https://www.linkedin.com');
+
+        //const checkLogin = await page.$('body');
+
+
         await page.waitForSelector('.share-box-feed-entry__closed-share-box');
         await page.waitForTimeout(3000);
     }
