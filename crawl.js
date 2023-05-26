@@ -68,16 +68,13 @@ class Crawl {
     }
 
     async scrapCompanies(page, company) {
-        let companyNames = [];
-        await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}`)
+        await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}`);
 
-        // await page.waitForSelector('.scaffold-layout__main');
-        //
-        // const noResults = await page.$('.search-reusable-search-no-results');
-        //
-        // if (noResults){
-        //     return companyNames;
-        // }
+        const noResults = await page.$('.search-reusable-search-no-results');
+
+        if (noResults){
+            return Error(noResults);
+        }
 
         await scrolling.infiniteScroll(page);
         await page.waitForSelector('.artdeco-pagination__indicator--number');
@@ -85,6 +82,7 @@ class Crawl {
             const pages = document.querySelectorAll('.artdeco-pagination__indicator--number');
             return parseInt(pages[pages.length - 1].textContent);
         });
+        let companyNames = [];
         for (let i = 1; i <= pageCount; i++) {
             await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}&page=${i}`);
             await page.waitForSelector('.reusable-search__result-container');
@@ -96,6 +94,7 @@ class Crawl {
         }
         return companyNames.flat();
     }
+
 }
 
 export const crawl = new Crawl();
