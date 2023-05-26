@@ -10,19 +10,23 @@ class Crawl {
         await page.setViewport({width: 1280, height: 800});
         await scrolling.infiniteScroll(page, 3);
 
-        // Wait for the search results to load
-        await page.waitForSelector(".scaffold-finite-scroll__content");
+        try {
+            // Wait for the search results to load ( if they exist )
+            await page.waitForSelector(".scaffold-finite-scroll__content", {timeout: 3000});
 
-        // Extract employees profiles links
-        return await page.evaluate(() => {
-            const employeesProfiles = Array.from(document.querySelectorAll('.org-people-profile-card'));
-            return employeesProfiles.map(profile => {
-                let profileLink = profile.querySelector(".app-aware-link");
-                if (profileLink !== null) {
-                    return profileLink.href.split("?")[0];
-                }
-            })
-        });
+            // Extract employees profiles links
+            return await page.evaluate(() => {
+                const employeesProfiles = Array.from(document.querySelectorAll('.org-people-profile-card'));
+                return employeesProfiles.map(profile => {
+                    let profileLink = profile.querySelector(".app-aware-link");
+                    if (profileLink !== null) {
+                        return profileLink.href.split("?")[0];
+                    }
+                })
+            });
+        } catch (e){
+            return [];
+        }
     }
 
     // Crawl all links and scrape employee information.
@@ -69,45 +73,43 @@ class Crawl {
 
     async scrapCompanies(page, company) {
         await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}`);
-
-        const noResults = await page.$('.search-reusable-search-no-results');
-
-        if (noResults){
-            return Error(noResults);
-        }
-
         await scrolling.infiniteScroll(page);
-        await page.waitForSelector('.artdeco-pagination__indicator--number');
-        const pageCount = await page.evaluate(() => {
-            const pages = document.querySelectorAll('.artdeco-pagination__indicator--number');
-            return parseInt(pages[pages.length - 1].textContent);
-        });
-        let companiesProfiles = [];
-        for (let i = 1; i <= pageCount; i++) {
-            await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}&page=${i}`);
-            await page.waitForSelector('.reusable-search__result-container');
 
-            const companiesElements = await page.$$('.entity-result__item');
+        try {
+            await page.waitForSelector('.artdeco-pagination__indicator--number', { timeout: 4000 });
+            const pageCount = await page.evaluate(() => {
+                const pages = document.querySelectorAll('.artdeco-pagination__indicator--number');
+                return parseInt(pages[pages.length - 1].textContent);
+            });
+            let companiesProfiles = [];
+            for (let i = 1; i <= pageCount; i++) {
+                await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}&page=${i}`);
+                await page.waitForSelector('.reusable-search__result-container');
 
-            for (const companyElement of companiesElements) {
-                let company = {};
-                const imgElement = await companyElement.$('.EntityPhoto-square-3');
-                company.profileImg = await page.evaluate((el) => {
-                    return el === null ? null : el.src;
-                }, imgElement);
+                const companiesElements = await page.$$('.entity-result__item');
 
-                const nameElement = await companyElement.$('.entity-result__title-text')
-                company.name = await page.evaluate(el => el.innerText, nameElement);
-                company.location = await page.evaluate((el) => el.href, nameElement);
+                for (const companyElement of companiesElements) {
+                    let company = {};
+                    const imgElement = await companyElement.$('.EntityPhoto-square-3');
+                    company.profileImg = await page.evaluate((el) => {
+                        return el === null ? null : el.src;
+                    }, imgElement);
 
-                const locationElement = await companyElement.$('.entity-result__primary-subtitle');
-                company.location = await page.evaluate((el) => el.innerText, locationElement);
+                    const nameElement = await companyElement.$('.entity-result__title-text')
+                    company.name = await page.evaluate(el => el.innerText, nameElement);
+                    company.location = await page.evaluate((el) => el.href, nameElement);
 
-                companiesProfiles.push(company)
-                console.log(company)
+                    const locationElement = await companyElement.$('.entity-result__primary-subtitle');
+                    company.location = await page.evaluate((el) => el.innerText, locationElement);
+
+                    companiesProfiles.push(company)
+                    console.log(company)
+                }
             }
+            return companiesProfiles.flat();
+        } catch (e) {
+            throw new Error("No result found");
         }
-        return companiesProfiles.flat();
     }
 
 }
