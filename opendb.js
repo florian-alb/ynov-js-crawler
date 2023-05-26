@@ -16,6 +16,7 @@ const createFirstTable = `
  const createSecondTable = `
     CREATE TABLE IF NOT EXISTS employee(
         Employee_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        EnterpriseId INTEGER,
         link TEXT NOT NULL UNIQUE,
         profileImg TEXT NOT NULL,
         nickname TEXT NOT NULL,
@@ -27,7 +28,7 @@ const createFirstTable = `
 const insertDataQueryEnterprises = `
     INSERT OR IGNORE INTO enterprises VALUES (NULL,?,?,?,?)`;
 const insertDataQueryEmployee = `
-    INSERT OR IGNORE INTO employee VALUES (NULL,?,?,?,?,?,?)`;
+    INSERT OR IGNORE INTO employee VALUES (NULL,?,?,?,?,?,?,?)`;
 
 const selectDataQueryEnterprises = `SELECT * FROM enterprises`;
 const selectDataQueryEmployee = `SELECT * FROM employee`;
@@ -46,6 +47,7 @@ async function performDatabaseOperations() {
     };
 
     const dataEmployee = {
+        EId: null,
         link: 'sample-link',
         profileImg: 'sample.jpg',
         nickname: 'Sample Name',
