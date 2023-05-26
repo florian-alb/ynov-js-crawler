@@ -29,17 +29,13 @@ async function runCrawler() {
         }
     );
     const page = await browser.newPage();
-    let nextPageExists = true;
 
-    await page.goto('https://www.linkedin.com/checkpoint/rm/sign-in-another-account?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin');
-
-    await page.type('#username', USERNAME);
-
-    await page.type('#password', PASSWORD);
-
-    await page.click('.login__form_action_container ');
-
+    const sessionCookie = '';
+    const cookie = {'name': 'li_at', 'value': sessionCookie, 'domain': '.linkedin.com'};
+    await page.setCookie(cookie);
+    await page.goto('https://www.linkedin.com');
     await page.waitForSelector('.share-box-feed-entry__closed-share-box');
+    await page.waitForTimeout(3000);
 
     // serach inov
     const company = 'Ynov';
