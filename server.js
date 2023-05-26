@@ -1,9 +1,9 @@
-var express = require('express');
-const ejs = require('ejs');
-var app = express();
+import express from "express";
+const app = express;
 
 
 app.use(express.static('public'));
+console.log("server is started on port :8080")
 app.set('view engine', 'ejs');
 app.listen(8080);
 
