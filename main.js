@@ -43,12 +43,5 @@ async function crawlEnterprises(company) {
     return companies;
 }
 
-crawlEnterprises('ynov').then(r => console.log(r));
+//crawlEnterprises('ynov').then(r => console.log(r));
 
-// run('ynovcampus', 10)
-//     .then((employees) => {
-//         console.log(employees);
-//     })
-//     .catch((error) => {
-//         console.error('An error occurred:', error);
-//     });
