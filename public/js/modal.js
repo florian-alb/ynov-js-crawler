@@ -1,8 +1,8 @@
 
-    var inputText = document.getElementById("search-bar");
-    var searchImage = document.getElementById("search-image");
-    var modal = document.getElementById("modal");
-    var closeButton = document.getElementsByClassName("close")[0];
+    let inputText = document.getElementById("search-bar");
+    let searchImage = document.getElementById("search-image");
+    let modal = document.getElementById("modal");
+    let closeButton = document.getElementsByClassName("close")[0];
 
     // Fonction pour ouvrir le modal
     function openModal() {

@@ -1,5 +1,5 @@
 function changeFavicon(path) {
-    var link = document.createElement('link');
+    let link = document.createElement('link');
     link.rel = 'icon';
     link.type = 'image/png';
     link.href = path;
@@ -7,4 +7,4 @@ function changeFavicon(path) {
 }
 
 // Utilisez la fonction pour changer le favicon
-changeFavicon('public/picture/favicon.png');
+changeFavicon('./picture/favicon.png');
