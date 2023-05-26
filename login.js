@@ -5,11 +5,12 @@ class Login {
         await page.setCookie(cookie);
         await page.goto('https://www.linkedin.com');
 
-        //const checkLogin = await page.$('body');
-
-
-        await page.waitForSelector('.share-box-feed-entry__closed-share-box');
-        await page.waitForTimeout(3000);
+        try {
+            await page.waitForSelector('.share-box-feed-entry__closed-share-box', { timeout : 3000});
+            console.log('Login successful');
+        } catch (e){
+            throw new Error('Login failed');
+        }
     }
 }
 
