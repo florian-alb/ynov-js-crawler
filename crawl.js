@@ -45,7 +45,8 @@ class Crawl {
 
                 await page.waitForSelector('.pv-top-card');
                 const employeeElements = await page.$$(".pv-top-card");
-                let employee = {link: link};
+                let employee = {};
+                employee.link = link;
                 for (const employeeElement of employeeElements) {
                     const imgElement = await employeeElement.$('.pv-top-card-profile-picture__image');
                     employee.profileImg = await page.evaluate((el) => el.src, imgElement);
