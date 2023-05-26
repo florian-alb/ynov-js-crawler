@@ -67,18 +67,17 @@ class Crawl {
         return employeeList;
     }
 
-    async scrapCompanies(page, company = 'Ynov') {
+    async scrapCompanies(page, company) {
         let companyNames = [];
         await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}`)
-        await page.waitForTimeout(2000);
 
-        await page.waitForSelector('.scaffold-layout__main');
-
-        const noResults = await page.$('.search-reusable-search-no-results');
-
-        if (noResults){
-            return companyNames;
-        }
+        // await page.waitForSelector('.scaffold-layout__main');
+        //
+        // const noResults = await page.$('.search-reusable-search-no-results');
+        //
+        // if (noResults){
+        //     return companyNames;
+        // }
 
         await scrolling.infiniteScroll(page);
         await page.waitForSelector('.artdeco-pagination__indicator--number');

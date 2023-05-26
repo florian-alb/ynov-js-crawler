@@ -5,6 +5,7 @@ class Login {
         await page.setCookie(cookie);
         await page.goto('https://www.linkedin.com');
         await page.waitForSelector('.share-box-feed-entry__closed-share-box');
+        await page.waitForTimeout(3000);
     }
 }
 
