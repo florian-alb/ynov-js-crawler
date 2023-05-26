@@ -101,7 +101,9 @@ class Crawl {
 
                     const nameElement = await companyElement.$('.entity-result__title-text')
                     company.name = await page.evaluate(el => el.innerText, nameElement);
-                    company.location = await page.evaluate((el) => el.href, nameElement);
+
+                    const linkElement = await companyElement.$('.app-aware-link ')
+                    company.link = await page.evaluate((el) => el.href, linkElement);
 
                     const locationElement = await companyElement.$('.entity-result__primary-subtitle');
                     company.location = await page.evaluate((el) => el.innerText, locationElement);
