@@ -15,6 +15,3 @@ app.get('/result', function (req, res) {
     res.render('pages/result');
 });
 
-app.get('/test', function (req,res){
-    res.render('pages/testmodal')
-})
