@@ -43,5 +43,5 @@ async function crawlEnterprises(company) {
     return companies;
 }
 
-crawlEnterprises('reehfdbnfhfdhd').then(r => console.log(r));
+//crawlC('reehfdbnfhfdhd').then(r => console.log(r));
 

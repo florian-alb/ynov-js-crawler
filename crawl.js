@@ -10,19 +10,23 @@ class Crawl {
         await page.setViewport({width: 1280, height: 800});
         await scrolling.infiniteScroll(page, 3);
 
-        // Wait for the search results to load
-        await page.waitForSelector(".scaffold-finite-scroll__content");
+        try {
+            // Wait for the search results to load ( if they exist )
+            await page.waitForSelector(".scaffold-finite-scroll__content", {timeout: 3000});
 
-        // Extract employees profiles links
-        return await page.evaluate(() => {
-            const employeesProfiles = Array.from(document.querySelectorAll('.org-people-profile-card'));
-            return employeesProfiles.map(profile => {
-                let profileLink = profile.querySelector(".app-aware-link");
-                if (profileLink !== null) {
-                    return profileLink.href.split("?")[0];
-                }
-            })
-        });
+            // Extract employees profiles links
+            return await page.evaluate(() => {
+                const employeesProfiles = Array.from(document.querySelectorAll('.org-people-profile-card'));
+                return employeesProfiles.map(profile => {
+                    let profileLink = profile.querySelector(".app-aware-link");
+                    if (profileLink !== null) {
+                        return profileLink.href.split("?")[0];
+                    }
+                })
+            });
+        } catch (e){
+            return [];
+        }
     }
 
     // Crawl all links and scrape employee information.
