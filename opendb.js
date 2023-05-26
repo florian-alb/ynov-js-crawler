@@ -13,7 +13,7 @@ const createFirstTable = `
                                               link TEXT NOT NULL UNIQUE
     );`;
 
- const createSecondTable = `
+const createSecondTable = `
     CREATE TABLE IF NOT EXISTS employee(
         Employee_id INTEGER PRIMARY KEY AUTOINCREMENT,
         EnterpriseId INTEGER,
