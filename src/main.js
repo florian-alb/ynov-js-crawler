@@ -22,9 +22,5 @@ async function crawlEmployees(companyName, sessionCookie, maxResults = 10) {
     return employeeList;
 }
 
-export async function crawlEnterprises(company, page) {
-    return await crawl.scrapCompanies(page, company);
-}
-
 // TODO : faire match le enterprise ID avec les employees
 // TODO : connecter avec le front

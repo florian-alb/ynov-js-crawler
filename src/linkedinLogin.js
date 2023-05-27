@@ -1,7 +1,6 @@
 class LinkedinLogin {
     // Navigate to LinkedIn login page and log
     async loginToLinkedin(page, sessionCookie) {
-        console.log(sessionCookie);
         const cookie = {'name': 'li_at', 'value': sessionCookie, 'domain': '.linkedin.com'};
         await page.setCookie(cookie);
         await page.goto('https://www.linkedin.com');

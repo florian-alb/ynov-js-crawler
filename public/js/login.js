@@ -1,23 +1,37 @@
 document.getElementById('session_cookie_form').addEventListener("submit", function (e) {
     e.preventDefault();
     loginErrorMessage(false);
-    localStorage.setItem('session_cookie', document.getElementById('cookie').value);
 
-    const name = 'Ynov';
-    const session = localStorage.getItem('session_cookie');
+    const searchValue = document.getElementById('search-bar').value;
+    const sessionValue = document.getElementById('cookie').value;
 
-    fetch(`/crawlEnterprises?name=${encodeURIComponent(name)}&session=${encodeURIComponent(session)}`) // Pass the name and session as query parameters
-        .then(data => {
-            console.log(data);
+    fetch('/crawlEnterprises', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            search: searchValue,
+            session: sessionValue
         })
+    }).then(function (response) {
+        if (response.status === 401) {
+            loginErrorMessage('Failed to connect to Linkedin, wrong session Cookie.', true);
+        } else {
+            loginErrorMessage('Linkedin login successful...\nLoading results...')
+        }
+    })
         .catch(error => {
+            loginErrorMessage('An error has occurred. Please try again later.', true);
             console.error(error);
         });
 });
 
 const errorMessage = document.getElementById("login_error");
-function loginErrorMessage(bool){
-    if (bool){
+
+function loginErrorMessage(error, bool) {
+    if (bool) {
+        errorMessage.textContent = error;
         errorMessage.style.display = "block";
     } else {
         errorMessage.style.display = "none";

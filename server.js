@@ -1,20 +1,22 @@
 import express from "express";
-import {crawlEnterprises} from "./src/main.js";
 import {linkedinLogin} from "./src/linkedinLogin.js";
 import puppeteer from "puppeteer";
-//import {loginErrorMessage} from "./public/js/login.js";
+import {crawl} from "./src/crawl.js";
 
 const app = express();
 app.use(express.static('public'));
+
+app.use(express.json());
 app.set('view engine', 'ejs');
 
 app.get('/', function (req, res) {
     res.render('pages/homepage');
 });
 
-app.get('/crawlEnterprises', async (req, res) => {
-    const name = req.query.name;
-    const sessionCookie = req.query.session;
+
+app.post('/crawlEnterprises', async function (req, res) {;
+    const search = req.body.search;
+    const sessionCookie = req.body.session;
 
     const browser = await puppeteer.launch(
         {
@@ -24,17 +26,23 @@ app.get('/crawlEnterprises', async (req, res) => {
         }
     );
     const page = await browser.newPage();
-
     const successfulLogin = await linkedinLogin.loginToLinkedin(page, sessionCookie);
 
     if (!successfulLogin){
-        return;
-        //loginErrorMessage(true);
+        console.log("erreur de login")
+        res.status(401);
+        res.send({
+            status: 401,
+            message: "Failed to login to linkedin"
+        });
     } else {
-        console.log("tout va bien")
+        res.status(200)
+        res.send({
+            status:200,
+            message: "Linkedin login successful"
+        })
+        return await crawl.scrapCompanies(page, search);
     }
-    const companies = crawlEnterprises(name);
-    console.log(companies);
 });
 
 app.get('/result', function (req, res) {
@@ -45,3 +53,4 @@ app.get('/result', function (req, res) {
 app.listen(8080, () => {
     console.log('Server is listening on port: 8080');
 });
+
