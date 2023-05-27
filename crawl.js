@@ -1,7 +1,6 @@
 import {scrolling} from "./infiniteScroll.js";
-import {insertDataQueryEnterprises} from "./opendb.js";
-import {insertDataQueryEmployee} from "./opendb.js";
-import {runQuery} from "./opendb.js";
+import {database} from "./database/database.js";
+
 
 class Crawl {
     // get the employees profiles.
@@ -27,13 +26,14 @@ class Crawl {
                     }
                 })
             });
-        } catch (e){
+        } catch (e) {
             return [];
         }
     }
 
     // Crawl all links and scrape employee information.
     async crawlCompanyEmployees(page, employeeLinks) {
+        await database.createDbConnection();
         let employeeList = [];
         for (const link of employeeLinks) {
             if (link !== null) {
@@ -69,55 +69,70 @@ class Crawl {
                 });
 
                 employeeList.push(employee);
-                await runQuery(insertDataQueryEmployee, employee);
-                console.log(employee);
+
+                database.runQuery(database.insertDataQueryEmployee, Object.values(employee))
+                    .then(result => {
+                        console.log('Query executed successfully:', result);
+                    })
+                    .catch(error => {
+                        console.error('Error executing query:', error);
+                    });
+
             }
         }
+        database.closeDatabase();
         return employeeList;
     }
 
     async scrapCompanies(page, company) {
+        await database.createDbConnection()
+
         await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}`);
         await scrolling.infiniteScroll(page);
-
         try {
-            await page.waitForSelector('.artdeco-pagination__indicator--number', { timeout: 4000 });
-            const pageCount = await page.evaluate(() => {
-                const pages = document.querySelectorAll('.artdeco-pagination__indicator--number');
-                return parseInt(pages[pages.length - 1].textContent);
-            });
-            let companiesProfiles = [];
-            for (let i = 1; i <= pageCount; i++) {
-                await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}&page=${i}`);
-                await page.waitForSelector('.reusable-search__result-container');
-
-                const companiesElements = await page.$$('.entity-result__item');
-
-                for (const companyElement of companiesElements) {
-                    let company = {};
-                    const imgElement = await companyElement.$('.EntityPhoto-square-3');
-                    company.profileImg = await page.evaluate((el) => {
-                        return el === null ? null : el.src;
-                    }, imgElement);
-
-                    const nameElement = await companyElement.$('.entity-result__title-text')
-                    company.name = await page.evaluate(el => el.innerText, nameElement);
-
-                    const linkElement = await companyElement.$('.app-aware-link ')
-                    company.link = await page.evaluate((el) => el.href, linkElement);
-
-                    const locationElement = await companyElement.$('.entity-result__primary-subtitle');
-                    company.location = await page.evaluate((el) => el.innerText, locationElement);
-
-                    companiesProfiles.push(company)
-                    await runQuery(insertDataQueryEnterprises, company);
-                    console.log(company)
-                }
-            }
-            return companiesProfiles.flat();
+            await page.waitForSelector('.artdeco-pagination__indicator--number', {timeout: 4000});
         } catch (e) {
+            console.log(e);
             throw new Error("No result found");
         }
+
+
+        const pageCount = await page.evaluate(() => {
+            const pages = document.querySelectorAll('.artdeco-pagination__indicator--number');
+            return parseInt(pages[pages.length - 1].textContent);
+        });
+        let companiesProfiles = [];
+        for (let i = 1; i <= pageCount; i++) {
+            await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}&page=${i}`);
+            await page.waitForSelector('.reusable-search__result-container');
+            const companiesElements = await page.$$('.entity-result__item');
+            for (const companyElement of companiesElements) {
+                let company = {};
+                const imgElement = await companyElement.$('.EntityPhoto-square-3');
+                company.profileImg = await page.evaluate((el) => {
+                    return el === null ? null : el.src;
+                }, imgElement);
+                const nameElement = await companyElement.$('.entity-result__title-text')
+                company.name = await page.evaluate(el => el.innerText, nameElement);
+                const linkElement = await companyElement.$('.app-aware-link ')
+                company.link = await page.evaluate((el) => el.href, linkElement);
+                const locationElement = await companyElement.$('.entity-result__primary-subtitle');
+                company.location = await page.evaluate((el) => el.innerText, locationElement);
+                companiesProfiles.push(company)
+
+                database.runQuery(database.insertDataQueryCompany, Object.values(company))
+                    .then(result => {
+                        console.log('Query executed successfully:', result);
+                    })
+                    .catch(error => {
+                        console.error('Error executing query:', error);
+                    });
+
+                //console.log(company)
+            }
+        }
+        database.closeDatabase();
+        return companiesProfiles.flat();
     }
 
 }

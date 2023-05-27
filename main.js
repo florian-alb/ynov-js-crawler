@@ -22,7 +22,6 @@ async function crawlEmployees(companyName, maxResults = 10) {
     const employeeList = await crawl.crawlCompanyEmployees(page, employeeLinks);
 
     await browser.close();
-
     return employeeList;
 }
 
@@ -43,5 +42,5 @@ async function crawlEnterprises(company) {
     return companies;
 }
 
-crawlEnterprises('Ynov').then(r => console.log(r));
+crawlEmployees('ntmgroup').then(r => console.log(r));
 
