@@ -1,17 +1,20 @@
-class Login {
+class LinkedinLogin {
     // Navigate to LinkedIn login page and log
     async loginToLinkedin(page, sessionCookie) {
+        console.log(sessionCookie);
         const cookie = {'name': 'li_at', 'value': sessionCookie, 'domain': '.linkedin.com'};
         await page.setCookie(cookie);
         await page.goto('https://www.linkedin.com');
 
         try {
             await page.waitForSelector('.share-box-feed-entry__closed-share-box', { timeout : 3000});
-            console.log('Login successful');
+            console.log('Linkedin Login successful');
+            return true;
         } catch (e){
-            throw new Error('Login failed');
+            console.log('Linkedin Login failed');
+            return false;
         }
     }
 }
 
-export const login = new Login();
+export const linkedinLogin = new LinkedinLogin();

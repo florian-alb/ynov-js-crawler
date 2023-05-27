@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="/picture/favicon.png">
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
     <link rel="stylesheet" href="/css/homepage.css">
     <title>YStalk</title>
 </head>
@@ -16,7 +16,7 @@
                 <input type="text" id="search-bar" placeholder="  Search the site:">
 
                 <div id="search-button">
-                    <input type="image" src="/picture/loupe.png" alt="Search" id="search-image"/>
+                    <input type="image" src="/assets/loupe.png" alt="Search" id="search-image"/>
                 </div>
             </form>
         </div>
@@ -34,12 +34,20 @@
     <div id="modal" class="modal">
         <div class="modal-content">
             <div class="input-cookie">
-                <input type="text" id="cookie" name="cookie" placeholder="Enter cookie session" required>
-                <span class="close">&times;</span>
+                <form id="session_cookie_form">
+                    <input type="text" id="cookie" name="cookie" placeholder="Enter cookie session" required>
+                    <input type="submit" id="submit_cookie" value="Login to Linkedin">
+                    <span class="close">&times;</span>
+                </form>
+            </div>
+
+            <div id="login_error">
+                <p>Login failed</p>
             </div>
 
         </div>
         <script src="/js/modal.js"></script>
+        <script type="module" src="/js/login.js"> </script>
     </div>
 
 </body>

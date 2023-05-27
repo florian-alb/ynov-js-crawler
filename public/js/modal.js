@@ -1,34 +1,33 @@
+const inputText = document.getElementById("search-bar");
+const searchImage = document.getElementById("search-image");
+const modal = document.getElementById("modal");
+const closeButton = document.getElementsByClassName("close")[0];
 
-    let inputText = document.getElementById("search-bar");
-    let searchImage = document.getElementById("search-image");
-    let modal = document.getElementById("modal");
-    let closeButton = document.getElementsByClassName("close")[0];
-
-    // Fonction pour ouvrir le modal
-    function openModal() {
+// Fonction pour ouvrir le modal
+function openModal() {
     modal.style.display = "block";
 }
 
-    function closeModal() {
+function closeModal() {
     modal.style.display = "none";
 }
 
-    window.onclick = function(event) {
+window.onclick = function (event) {
     if (event.target == modal) {
-    closeModal();
-}
-}
-
-    closeButton.onclick = function() {
-    closeModal();
+        closeModal();
+    }
 }
 
-    searchImage.onclick = function() {
+closeButton.onclick = function () {
+    closeModal();
+}
+
+searchImage.onclick = function () {
     openModal();
 }
 
-    inputText.addEventListener("keyup", function(event) {
+inputText.addEventListener("keyup", function (event) {
     if (event.keyCode === 13) { // 13 correspond à la touche Entrée
-    openModal();
-}});
-
+        openModal();
+    }
+});

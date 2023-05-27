@@ -7,4 +7,4 @@ function changeFavicon(path) {
 }
 
 // Utilisez la fonction pour changer le favicon
-changeFavicon('./picture/favicon.png');
+changeFavicon('./assets/favicon.png');

@@ -137,3 +137,7 @@ form {
 
     width: 33vw;
 }
+
+#login_error{
+    display: none;
+}

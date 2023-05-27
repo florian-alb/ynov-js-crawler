@@ -1,5 +1,5 @@
 import {scrolling} from "./infiniteScroll.js";
-import {database} from "./database/database.js";
+import {database} from "../database/database.js";
 
 
 class Crawl {
@@ -40,9 +40,7 @@ class Crawl {
                 // Set a random delay between 2000 and 5000 milliseconds to avoid multiples request error.
                 const delay = Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000;
                 await page.waitForTimeout(delay);
-
                 await page.goto(link);
-
                 await page.waitForSelector('.pv-top-card');
                 const employeeElements = await page.$$(".pv-top-card");
                 let employee = {};
