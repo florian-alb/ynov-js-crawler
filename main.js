@@ -44,3 +44,7 @@ async function crawlEnterprises(company) {
 
 crawlEmployees('ntmgroup').then(r => console.log(r));
 
+
+// TODO : aranger le code scrap;
+// TODO : faire match le enterprise ID avec les employees
+// TODO : connecter avec le front
