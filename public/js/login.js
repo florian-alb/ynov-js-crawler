@@ -21,14 +21,6 @@ document.getElementById('session_cookie_form').addEventListener("submit", async 
                 displayMessage('Login successful. \n Waiting for results.', true);
             }
         })
-        // .then(response => {
-        //     if (response.message === 'Scraping completed successfully.') {
-        //         fetch('/displayCompanies')
-        //             .then(response => response.json())
-        //             .then(response => displayCompany(response)
-        //             );
-        //     }
-        // })
         .catch(error => {
             displayMessage('An error has occurred. Please try again later.', true);
             console.error(error);

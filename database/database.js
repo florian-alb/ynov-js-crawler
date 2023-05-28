@@ -1,7 +1,7 @@
 import sqlite3 from "sqlite3";
 
 class DataBase {
-    db = new sqlite3.Database('database/database.db');
+    //db = new sqlite3.Database('database/database.db');
 
     insertDataQueryCompany = `INSERT INTO companies (img, name, location, link)
                               VALUES (?, ?, ?, ?) `;
@@ -19,11 +19,11 @@ class DataBase {
         db.exec(`
             CREATE TABLE IF NOT EXISTS companies
             (
-                ID       INTEGER PRIMARY KEY AUTOINCREMENT,
-                img      TEXT,
-                name     TEXT,
+                ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                img TEXT,
+                name TEXT,
                 location TEXT,
-                link     TEXT NULL
+                link TEXT NULL
             );
         `);
     }
@@ -32,29 +32,31 @@ class DataBase {
         db.exec(`
             CREATE TABLE IF NOT EXISTS employees
             (
-                ID        INTEGER PRIMARY KEY AUTOINCREMENT,
+                ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 CompanyId INTEGER,
-                link      TEXT,
-                img       TEXT,
-                name      TEXT,
-                subtitle  TEXT,
-                location  TEXT,
-                email     TEXT
+                link TEXT,
+                img TEXT NULL,
+                name TEXT,
+                subtitle TEXT,
+                location TEXT,
+                email TEXT NULL
             );
         `);
     }
 
 // Wrap the database operations in an async function
     async createDbConnection() {
-        await this.createCompanyTable(this.db);
-        await this.createEmployeeTable(this.db);
+        const db = new sqlite3.Database('database/database.db');
+        await this.createCompanyTable(db);
+        await this.createEmployeeTable(db);
         console.log("Connection with SQLite has been established");
+        return db;
     }
 
 // Helper function to run a query with optional parameters
-    runQuery(query, params = []) {
+    runQuery(db, query, params = []) {
         return new Promise((resolve, reject) => {
-            this.db.run(query, params, function (error) {
+            db.run(query, params, function (error) {
                 if (error) {
                     reject(error);
                 } else {
@@ -65,9 +67,10 @@ class DataBase {
     }
 
     getCompaniesFromDb = () => {
+        const db = new sqlite3.Database('database/database.db');
         return new Promise((resolve, reject) => {
             const sql = "SELECT * FROM companies";
-            this.db.all(sql, [], (err, rows) => {
+            db.all(sql, [], (err, rows) => {
                 if (err) {
                     reject(err.message);
                     return;
@@ -77,26 +80,17 @@ class DataBase {
         });
     };
 
-    insertIntoDb = (query, params=[]) => {
-        return new Promise((resolve, reject) => {
-            this.db.run(query, params, function (err) {
+    clearTable(db, tableName) {
+        db.serialize(() => {
+            db.run(`DELETE
+                    FROM ${tableName}`, (err) => {
                 if (err) {
-                    reject(err.message);
-                    return;
+                    console.error("An error occurred:", err.message);
+                } else {
+                    console.log(`The ${tableName} table has been cleared.`);
                 }
-                resolve({ id: this.lastID });  // Renvoie l'ID de la nouvelle ligne insérée
             });
         });
-    };
-
-    closeDatabase(error = null){
-        if (error){
-            console.error("Error performing database operations:", error);
-            this.db.close();
-        } else {
-            console.log("Database closed successfully.");
-            this.db.close();
-        }
     }
 }
 

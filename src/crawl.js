@@ -1,5 +1,6 @@
 import {scrolling} from "./infiniteScroll.js";
 import {database} from "../database/database.js";
+import sqlite3 from "sqlite3";
 
 
 class Crawl {
@@ -33,7 +34,7 @@ class Crawl {
 
     // Crawl all links and scrape employee information.
     async crawlCompanyEmployees(page, employeeLinks) {
-        await database.createDbConnection();
+        const db = await database.createDbConnection();
         let employeeList = [];
         for (const link of employeeLinks) {
             if (link !== null) {
@@ -57,34 +58,36 @@ class Crawl {
                 }
 
                 employee.location = await page.evaluate(() => {
-                    const el = document.querySelector('.text-body-small.inline.t-black--light.break-words');
-                    return el === null ? null : el.textContent.trim();
-                });
+                        const el = document.querySelector('.text-body-small.inline.t-black--light.break-words');
+                        return el === null ? null : el.textContent.trim();
+                    }
+                );
 
                 employee.email = await page.evaluate(() => {
-                    const el = document.querySelector('.pv-contact-info__contact-link.link-without-visited-state.t-14');
-                    return el === null ? null : el.textContent.trim();
-                });
+                        const el = document.querySelector('.pv-contact-info__contact-link.link-without-visited-state.t-14');
+                        return el === null ? null : el.textContent.trim();
+                    }
+                );
 
                 employeeList.push(employee);
 
-                database.runQuery(database.insertDataQueryEmployee, Object.values(employee))
+                database.runQuery(db, database.insertDataQueryEmployee, Object.values(employee))
                     .then(result => {
                         console.log('Query executed successfully:', result);
                     })
                     .catch(error => {
-                        console.error('Error executing query:', error);
-                    });
-
+                            console.error('Error executing query:', error);
+                        }
+                    );
             }
         }
-        //database.closeDatabase();
+        await db.close();
         return employeeList;
     }
 
     async scrapCompanies(page, company) {
-        await database.createDbConnection()
-
+        const db = await database.createDbConnection()
+        await database.clearTable(db, 'companies');
         await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}`);
         await scrolling.infiniteScroll(page);
         try {
@@ -97,7 +100,7 @@ class Crawl {
         const pageCount = await page.evaluate(() => {
             const pages = document.querySelectorAll('.artdeco-pagination__indicator--number');
 
-            return pages[pages.length-1] === undefined ? 1 : parseInt(pages[pages.length - 1].textContent);
+            return pages[pages.length - 1] === undefined ? 1 : parseInt(pages[pages.length - 1].textContent);
         });
         let companiesProfiles = [];
         for (let i = 1; i <= pageCount; i++) {
@@ -118,18 +121,16 @@ class Crawl {
                 company.location = await page.evaluate((el) => el.innerText, locationElement);
                 companiesProfiles.push(company)
 
-                database.insertIntoDb(database.insertDataQueryCompany, Object.values(company))
+                database.runQuery(db, database.insertDataQueryCompany, Object.values(company))
                     .then(result => {
                         console.log('Query executed successfully:', result);
                     })
                     .catch(error => {
                         console.error('Error executing query:', error);
                     });
-
-                //console.log(company)
             }
         }
-        //database.closeDatabase();
+        await db.close();
         return companiesProfiles.flat();
     }
 

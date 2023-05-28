@@ -6,7 +6,6 @@ class LinkedinLogin {
         await page.goto('https://www.linkedin.com');
         try {
             await page.waitForSelector('.share-box-feed-entry__closed-share-box', { timeout : 3000});
-            console.log('Linkedin Login successful');
             return true;
         } catch (e){
             console.log('Linkedin Login failed');

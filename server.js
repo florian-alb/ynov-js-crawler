@@ -3,6 +3,7 @@ import {linkedinLogin} from "./src/linkedinLogin.js";
 import puppeteer from "puppeteer";
 import {crawl} from "./src/crawl.js";
 import {database} from "./database/database.js";
+import sqlite3 from "sqlite3";
 
 const app = express();
 let page;
