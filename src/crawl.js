@@ -78,7 +78,7 @@ class Crawl {
 
             }
         }
-        database.closeDatabase();
+        //database.closeDatabase();
         return employeeList;
     }
 
@@ -118,7 +118,7 @@ class Crawl {
                 company.location = await page.evaluate((el) => el.innerText, locationElement);
                 companiesProfiles.push(company)
 
-                database.runQuery(database.insertDataQueryCompany, Object.values(company))
+                database.insertIntoDb(database.insertDataQueryCompany, Object.values(company))
                     .then(result => {
                         console.log('Query executed successfully:', result);
                     })
@@ -129,7 +129,7 @@ class Crawl {
                 //console.log(company)
             }
         }
-        database.closeDatabase();
+        //database.closeDatabase();
         return companiesProfiles.flat();
     }
 

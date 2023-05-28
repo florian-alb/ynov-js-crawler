@@ -4,7 +4,6 @@ class LinkedinLogin {
         const cookie = {'name': 'li_at', 'value': sessionCookie, 'domain': '.linkedin.com'};
         await page.setCookie(cookie);
         await page.goto('https://www.linkedin.com');
-
         try {
             await page.waitForSelector('.share-box-feed-entry__closed-share-box', { timeout : 3000});
             console.log('Linkedin Login successful');

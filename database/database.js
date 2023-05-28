@@ -3,15 +3,11 @@ import sqlite3 from "sqlite3";
 class DataBase {
     db = new sqlite3.Database('database/database.db');
 
-    insertDataQueryCompany = `
-        INSERT INTO companies (img, name, location, link)
-        VALUES (?, ?, ?, ?)
-    `;
+    insertDataQueryCompany = `INSERT INTO companies (img, name, location, link)
+                              VALUES (?, ?, ?, ?) `;
 
-    insertDataQueryEmployee = `
-        INSERT INTO employees (CompanyId, link, img, name, subtitle, location, email)
-        VALUES (NULL, ?, ?, ?, ?, ?, ?)
-    `;
+    insertDataQueryEmployee = `INSERT INTO employees (CompanyId, link, img, name, subtitle, location, email)
+                               VALUES (NULL, ?, ?, ?, ?, ?, ?)`;
 
     selectDataQueryEnterprises = `SELECT *
                                   FROM companies`;
@@ -67,6 +63,31 @@ class DataBase {
             });
         });
     }
+
+    getCompaniesFromDb = () => {
+        return new Promise((resolve, reject) => {
+            const sql = "SELECT * FROM companies";
+            this.db.all(sql, [], (err, rows) => {
+                if (err) {
+                    reject(err.message);
+                    return;
+                }
+                resolve(rows);
+            });
+        });
+    };
+
+    insertIntoDb = (query, params=[]) => {
+        return new Promise((resolve, reject) => {
+            this.db.run(query, params, function (err) {
+                if (err) {
+                    reject(err.message);
+                    return;
+                }
+                resolve({ id: this.lastID });  // Renvoie l'ID de la nouvelle ligne insérée
+            });
+        });
+    };
 
     closeDatabase(error = null){
         if (error){
