@@ -77,8 +77,6 @@ app.get('/displayCompanies', async (req, res) => {
     try {
         const companies = await database.getCompaniesFromDb();
 
-        console.log("compani= ", companies);
-
         res.json({
             "message": "success",
             "data": companies

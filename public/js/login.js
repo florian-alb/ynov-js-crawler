@@ -29,8 +29,6 @@ document.getElementById('session_cookie_form').addEventListener("submit", async 
             console.error(error);
         });
 
-    await console.log('suivant');
-
     await fetch('/crawlCompanies', {
         method: 'POST',
         headers: {
@@ -47,7 +45,6 @@ document.getElementById('session_cookie_form').addEventListener("submit", async 
                 fetch('/displayCompanies')
                     .then(response => response.json())
                     .then(data => {
-                        console.log("data= ", data.data.length);
                         displayCompanies(data.data);
                     })
                     .catch(err => console.error(err));
