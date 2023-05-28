@@ -88,16 +88,16 @@ class Crawl {
         await page.goto(`https://www.linkedin.com/search/results/companies/?keywords=${company}`);
         await scrolling.infiniteScroll(page);
         try {
-            await page.waitForSelector('.artdeco-pagination__indicator--number', {timeout: 4000});
+            await page.waitForSelector('.reusable-search__entity-result-list', {timeout: 4000});
         } catch (e) {
             console.log(e);
             throw new Error("No result found");
         }
 
-
         const pageCount = await page.evaluate(() => {
             const pages = document.querySelectorAll('.artdeco-pagination__indicator--number');
-            return parseInt(pages[pages.length - 1].textContent);
+
+            return pages[pages.length-1] === undefined ? 1 : parseInt(pages[pages.length - 1].textContent);
         });
         let companiesProfiles = [];
         for (let i = 1; i <= pageCount; i++) {

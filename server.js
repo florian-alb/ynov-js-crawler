@@ -2,6 +2,8 @@ import express from "express";
 import {linkedinLogin} from "./src/linkedinLogin.js";
 import puppeteer from "puppeteer";
 import {crawl} from "./src/crawl.js";
+import {database} from "./database/database.js";
+import e from "express";
 
 const app = express();
 app.use(express.static('public'));
@@ -14,7 +16,7 @@ app.get('/', function (req, res) {
 });
 
 
-app.post('/crawlEnterprises', async function (req, res) {;
+app.post('/crawlCompanies', async function (req, res) {
     const search = req.body.search;
     const sessionCookie = req.body.session;
 
@@ -28,7 +30,7 @@ app.post('/crawlEnterprises', async function (req, res) {;
     const page = await browser.newPage();
     const successfulLogin = await linkedinLogin.loginToLinkedin(page, sessionCookie);
 
-    if (!successfulLogin){
+    if (!successfulLogin) {
         console.log("erreur de login")
         res.status(401);
         res.send({
@@ -36,14 +38,23 @@ app.post('/crawlEnterprises', async function (req, res) {;
             message: "Failed to login to linkedin"
         });
     } else {
-        res.status(200)
-        res.send({
-            status:200,
-            message: "Linkedin login successful"
+        const companiesProfiles = await crawl.scrapCompanies(page, search);
+        await browser.close();
+        res.json({
+            status: 200,
+            message: 'Scraping completed successfully.',
+            companies: companiesProfiles,
+
         })
-        return await crawl.scrapCompanies(page, search);
     }
 });
+
+app.get('/displayCompanies', (req, res) => {
+    database.runQuery(database.selectDataQueryEnterprises)
+        .then((rows => res.json(rows)))
+        .catch(e => res.json(e))
+});
+
 
 app.get('/result', function (req, res) {
     res.render('pages/result');
