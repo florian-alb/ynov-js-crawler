@@ -1,5 +1,8 @@
-document.getElementById('session_cookie_form').addEventListener("submit", async function (e) {
-    e.preventDefault();
+document.getElementById('session_cookie_form').addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    await removeResults();
+
     await displayMessage(false);
 
     const searchValue = document.getElementById('search-bar').value;
@@ -73,6 +76,7 @@ const displayCompanies = (companies) => {
     const companiesContainer = document.getElementById('companiesContainer');
     companies.forEach(company => {
         const companyDiv = document.createElement('div');
+        companyDiv.className = "company_search_result"
         companyDiv.innerHTML = `
             <img src="${company.img}" alt="${company.name}">
             <h3>${company.name}</h3>
@@ -82,3 +86,10 @@ const displayCompanies = (companies) => {
         companiesContainer.appendChild(companyDiv);
     });
 };
+
+const removeResults = () => {
+    let companies = document.querySelectorAll('.company_search_result');
+    if (companies.length>0){
+        companies.forEach(el => el.remove())
+    }
+}
