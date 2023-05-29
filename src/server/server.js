@@ -23,8 +23,8 @@ app.post('/login', async function (req, res) {
 
     browser = await puppeteer.launch(
         {
-            //headless: false, // open a visual page
-            headless: true, // do not open a visual page
+            headless: false, // open a visual page
+            //headless: true, // do not open a visual page
             ignoreHTTPSErrors: true,
             timeout: 0,
         }

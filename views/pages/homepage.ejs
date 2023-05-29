@@ -4,52 +4,55 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="/assets/favicon.png">
     <link rel="stylesheet" href="/css/homepage.css">
-    <title>YStalk</title>
+    <link rel="stylesheet" href="/css/global.css">
+    <title>Inkescrap</title>
 </head>
 <body>
 
-    <div class="container">
-        <h1 class="h1">YStalk</h1>
+<div class="container">
 
-        <div class="couple-search">
-            <form onsubmit="event.preventDefault();">
-                <input type="text" id="search-bar" placeholder="Search the site:">
+    <div class="logo_div">
+        <img src="/assets/logo.svg" class="logo" alt="logo">
+    </div>
 
-                <div id="search-button">
-                    <input type="image" src="/assets/loupe.png" alt="Search" id="search-image"/>
-                </div>
+    <div class="couple-search">
+        <div class="searchbar-container">
+            <div class="search-logo">
+                <input type="image" id="search-image" src="/assets/search.svg" alt="search-icon">
+                <input id="search-bar" type="text" placeholder="Company to crawl :">
+            </div>
+        </div>
+    </div>
+
+    <div class="couple-range">
+        <label for="rangeValue" id="text-range">How many profiles</label>
+        <div class="slider-container">
+            <input type="range" min="1" max="20" value="1" id="myRange">
+            <span class="slider-value" id="rangeValue">1</span>
+        </div>
+        <script src="/js/slider.js"></script>
+    </div>
+</div>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="input-cookie">
+            <form id="session_cookie_form">
+                <input type="text" id="cookie" name="cookie" placeholder="Enter cookie session" required>
+                <input type="submit" id="submit_cookie" value="Login to Linkedin">
+                <span class="close">&times;</span>
             </form>
         </div>
 
-        <div class="couple-range">
-            <label for="rangeValue" id="text-range">How many profiles</label>
-            <div class="slider-container">
-                <input type="range" min="1" max="20" value="1" id="myRange">
-                <span class="slider-value" id="rangeValue">1</span>
-            </div>
-            <script src="/js/slider.js"></script>
+        <div id="login_error">
+            <p>Login failed</p>
         </div>
+        <div id="companiesContainer"></div>
+
     </div>
-
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <div class="input-cookie">
-                <form id="session_cookie_form">
-                    <input type="text" id="cookie" name="cookie" placeholder="Enter cookie session" required>
-                    <input type="submit" id="submit_cookie" value="Login to Linkedin">
-                    <span class="close">&times;</span>
-                </form>
-            </div>
-
-            <div id="login_error">
-                <p>Login failed</p>
-            </div>
-            <div id="companiesContainer"></div>
-
-        </div>
-    </div>
-    <script src="/js/modal.js"></script>
-    <script type="module" src="/js/runCompanies.js"> </script>
-    <script type="module" src="js/displayMessage.js"></script>
+</div>
+<script src="/js/modal.js"></script>
+<script type="module" src="/js/runCompanies.js"></script>
+<script type="module" src="js/displayMessage.js"></script>
 </body>
 </html>
