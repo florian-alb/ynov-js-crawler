@@ -5,9 +5,9 @@ import sqlite3 from "sqlite3";
 
 class Crawl {
     // get the employees profiles.
-    async scrapeEmployeesLinks(page, companyName) {
+    async scrapeEmployeesLinks(page, companyLink) {
         //Go to company employee list
-        await page.goto(`https://www.linkedin.com/company/${companyName}/people/`);
+        await page.goto(`${companyLink}people/`);
 
         // Scroll to the bottom of the page
         await page.setViewport({width: 1280, height: 800});
@@ -28,13 +28,15 @@ class Crawl {
                 })
             });
         } catch (e) {
-            return [];
+            console.log(e);
+            throw new Error("No result found");
         }
     }
 
     // Crawl all links and scrape employee information.
     async crawlCompanyEmployees(page, employeeLinks) {
         const db = await database.createDbConnection();
+        await database.clearTable(db, 'employees');
         let employeeList = [];
         for (const link of employeeLinks) {
             if (link !== null) {
@@ -115,10 +117,10 @@ class Crawl {
                 }, imgElement);
                 const nameElement = await companyElement.$('.entity-result__title-text')
                 company.name = await page.evaluate(el => el.innerText, nameElement);
-                const linkElement = await companyElement.$('.app-aware-link ')
-                company.link = await page.evaluate((el) => el.href, linkElement);
                 const locationElement = await companyElement.$('.entity-result__primary-subtitle');
                 company.location = await page.evaluate((el) => el.innerText, locationElement);
+                const linkElement = await companyElement.$('.app-aware-link ')
+                company.link = await page.evaluate((el) => el.href, linkElement);
                 companiesProfiles.push(company)
 
                 database.runQuery(db, database.insertDataQueryCompany, Object.values(company))
@@ -132,6 +134,14 @@ class Crawl {
         }
         await db.close();
         return companiesProfiles.flat();
+    }
+
+    async crawlEmployees(page,companyLink, maxResults = 10) {
+        let employeeLinks = await this.scrapeEmployeesLinks(page, companyLink);
+        if (maxResults<employeeLinks.length){
+            employeeLinks = employeeLinks.slice(0, maxResults);
+        }
+        return await this.crawlCompanyEmployees(page, employeeLinks);
     }
 
 }

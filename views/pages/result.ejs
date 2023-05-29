@@ -6,21 +6,22 @@
     <link rel="icon" type="image/png" href="/picture/favicon.png">
     <title>YStalk</title>
 </head>
+
 <body>
 
-    <div id="bandeau">
-        <button class="my-button" onclick="redirectToHomepage()">YStalk</button>
+<div id="bandeau">
+    <button class="my-button" onclick="redirectToHomepage()">YStalk</button>
+    <form>
+        <input type="text" id="search-bar" name="q" placeholder="  Search the site:"/>
+        <div id="search-button">
+            <input type="image" src="/picture/loupe.png" alt="Search" id="search-image"/>
+        </div>
+        <script src="/js/redirect.js"></script>
+    </form>
+</div>
 
-
-            <form>
-                <input type="text" id="search-bar" name="q" placeholder="  Search the site:" />
-                <div id="search-button">
-                    <input type="image" src="/picture/loupe.png" alt="Search" id="search-image" />
-                </div>
-                <script src="/js/redirect.js"></script>
-            </form>
-
-
-    </div>
+<div id="employeeContainer"></div>
+<script type='module' src="/js/displayResult.js"></script>
+<script type="module" src="js/displayMessage.js"></script>
 </body>
 </html>

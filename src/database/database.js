@@ -9,10 +9,10 @@ class DataBase {
     insertDataQueryEmployee = `INSERT INTO employees (CompanyId, link, img, name, subtitle, location, email)
                                VALUES (NULL, ?, ?, ?, ?, ?, ?)`;
 
-    selectDataQueryEnterprises = `SELECT *
+    selectDataQueryCompanies = `SELECT *
                                   FROM companies`;
 
-    selectDataQueryEmployee = `SELECT *
+    selectDataQueryEmployees = `SELECT *
                                FROM employees`;
 
     createCompanyTable(db) {
@@ -46,7 +46,7 @@ class DataBase {
 
 // Wrap the database operations in an async function
     async createDbConnection() {
-        const db = new sqlite3.Database('database/database.db');
+        const db = new sqlite3.Database('src/database/database.db');
         await this.createCompanyTable(db);
         await this.createEmployeeTable(db);
         console.log("Connection with SQLite has been established");
@@ -66,11 +66,10 @@ class DataBase {
         });
     }
 
-    getCompaniesFromDb = () => {
-        const db = new sqlite3.Database('database/database.db');
+    getFromDb = (query) => {
+        const db = new sqlite3.Database('src/database/database.db');
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM companies";
-            db.all(sql, [], (err, rows) => {
+            db.all(query, [], (err, rows) => {
                 if (err) {
                     reject(err.message);
                     return;
