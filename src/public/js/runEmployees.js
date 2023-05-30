@@ -6,7 +6,7 @@ export const scrapEmployees = async (companyLink) => {
     const submitButton = document.querySelectorAll('.company-button');
     submitButton.forEach(button => button.disabled = true);
 
-    displayMessage("Scrapping in progress, please wait...")
+    await displayMessage("Scrapping in progress, please wait...")
 
     await fetch('/crawlEmployees', {
         method: 'POST',
@@ -18,11 +18,11 @@ export const scrapEmployees = async (companyLink) => {
             max: maxResults,
         })
     })
-        .then(response => {
+        .then(async response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            displayMessage("Scrapping succeed, redirection...")
+            await displayMessage("Scrapping succeed, redirection...")
             console.log('Scrapping succeed, redirection...')
             window.location.href = "/result";
         })

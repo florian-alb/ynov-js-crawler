@@ -12,12 +12,18 @@ const displayEmployees = (employees) => {
         container.innerHTML = '';
         employees.forEach(row => {
             const div = document.createElement('div');
+            div.className = "result_item";
             div.innerHTML = `
-      <img src=${row.img} alt='${row.name}_image'>
-      <p>Name: ${row.name}</p>
-      <p>Subtitle: ${row.subtitle}</p>
-      <p>Location: ${row.location}</p>
-      <p>Email: ${row.email}</p>
+            <div class='result-image'>
+                <img src=${row.img} alt='${row.name}_image'>
+            </div>
+            <div class='result-informations'>
+                <p><b>Name: </b>${row.name}</p>
+                <p><b>Subtitle: </b>${row.subtitle}</p>
+                <p><b>Location: </b>${row.location}</p>
+                <p><b>Email: </b>${row.email}</p>
+                <a href='${row.link}' target="_blank"><b>Profile link</b></a>
+            </div>
     `;
             container.appendChild(div);
         });

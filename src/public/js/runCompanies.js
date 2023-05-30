@@ -15,6 +15,12 @@ document.getElementById('session_cookie_form').addEventListener("submit", async 
     const sessionValue = document.getElementById('cookie').value;
 
     try {
+        if(searchValue.length === 0){
+            alert("The search must be non-null");
+            submitButton.disabled = false;
+            return;
+        }
+
         await fetch('/login', {
             method: 'POST',
             headers: {
@@ -70,11 +76,17 @@ const displayCompanies = (companies) => {
         const companyDiv = document.createElement('div');
         companyDiv.className = "company_search_result"
         companyDiv.innerHTML = `
+        <div class='result-image'>
             <img src="${company.img}" alt="${company.name}">
+        </div>
+        <div class='result-informations'>
             <h3>${company.name}</h3>
             <p>Location: ${company.location}</p>
             <a href="${company.link}" target="_blank">More Info</a>
-            <button class="company-button">Scrap employees for this Company</button>
+            </div>
+        <div class='start-scarp-buton'>
+            <button class="company-button">Scrap employees</button>
+        </div>
         `;
         companyDiv.querySelector(".company-button").onclick = () => {
             scrapEmployees(company.link);

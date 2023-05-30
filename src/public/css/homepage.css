@@ -1,8 +1,3 @@
-
-body {
-    background-color: #23b2a4;
-}
-
 .logo_div{
     max-height: 92px;
     position: relative;
@@ -56,6 +51,9 @@ label {
     border: none;
     background: none;
     color: white;
+    border-radius: 0 24px 24px 0;
+    border-left: 1px solid white;
+    padding-left: 7px;
 }
 
 #search-bar::placeholder{
@@ -66,9 +64,29 @@ label {
     outline: 0;
 }
 
-form {
+#session_cookie_form {
     display: flex;
     align-items: center;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#submit_cookie {
+    appearance: none;
+    background: white;
+    color: black;
+    border: 1px solid;
+    font-size: 1rem;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+#submit_cookie:hover{
+    background: #027fbc;
+}
+
+#submit_cookie:disabled{
+    background: #027fbc;
 }
 
 #search-button{
@@ -109,30 +127,35 @@ form {
 }
 
 .modal {
-    display: none   ; /* Cacher le modal par défaut */
-    position: fixed; /* Position fixe pour le modal */
-    z-index: 1; /* Mettre le modal au-dessus des autres éléments */
+    display: none   ;
+    position: fixed;
+    z-index: 1;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto; /* Ajouter un défilement si nécessaire */
-    background-color: rgba(0, 0, 0, 0.4); /* Fond semi-transparent */
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
-    background-color: #fefefe;
+    background-color: #0b0b0bf2;
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
 }
 
+
+
 .close {
-    color: #aaa;
+    color: white;
     float: right;
     font-size: 28px;
     font-weight: bold;
+    position: relative;
+    top: -26px;
+    right: -14px;
 }
 
 .close:hover,
@@ -146,13 +169,13 @@ form {
     display: flex;
     align-items: center;
     justify-content: center;
-
-
+    margin: 10px;
 }
 
 .input-cookie input[type="text"] {
     outline: none;
     width: 100%;
+    height: 2rem;
     text-align: center;
     border: 1px solid black;
     border-radius: 10px;
@@ -165,6 +188,7 @@ form {
 
 #login_error{
     display: none;
+    text-align: center;
 }
 
 .company {
@@ -197,4 +221,38 @@ form {
     text-decoration: none;
     display: block;
     margin-top: 10px;
+}
+
+#companiesContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.company_search_result {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #f4f4f445;
+    justify-content: space-between;
+}
+
+button.company-button {
+    max-width: 150px;
+    appearance: none;
+    background: #fefefe;
+    color: black;
+    border: 1px solid;
+    font-size: 1rem;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+button.company-button:hover{
+    background: #027fbc;
+}
+
+button.company-button:disabled{
+    background: #027fbc;
 }

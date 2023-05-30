@@ -23,8 +23,8 @@ app.post('/login', async function (req, res) {
 
     browser = await puppeteer.launch(
         {
-            headless: false, // open a visual page
-            //headless: true, // do not open a visual page
+            //headless: false, // open a visual page
+            headless: true, // do not open a visual page
             ignoreHTTPSErrors: true,
             timeout: 0,
         }
@@ -92,7 +92,7 @@ app.get('/displayCompanies', async (req, res) => {
 app.post('/crawlEmployees', async function (req, res) {
     console.log('Start crawling');
     const companyLink = req.body.link;
-    const maxResults = req.body.maxResults;
+    const maxResults = req.body.max;
 
     try {
         const employees = await crawl.crawlEmployees(page, companyLink, maxResults)
