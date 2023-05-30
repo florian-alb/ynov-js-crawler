@@ -256,3 +256,15 @@ button.company-button:hover{
 button.company-button:disabled{
     background: #027fbc;
 }
+
+.result-informations {
+    align-self: flex-start;
+    margin-right: auto;
+    width: 60%;
+}
+.start-scarp-buton {
+    width: 20%;
+}
+.result-image {
+    width: 20%;
+}
